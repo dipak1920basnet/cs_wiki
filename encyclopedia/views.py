@@ -4,6 +4,7 @@ from . import util
 
 import markdown2
 from django import forms
+import random
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -22,6 +23,11 @@ def call(request, name):
         "title":name,
         "entrie":markdown2.Markdown().convert(content)
     })
+
+def random_entry(request):
+    content_list = util.list_entries()
+    m = random.choice(content_list)
+    return redirect('call',name=m)
 
 def search(request):
     if request.method == "POST":
@@ -79,3 +85,9 @@ def create_content(request):
     return render(request, "encyclopedia/add.html",{
         "form":AddContent()
     })
+
+def go_edit(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        title=(title.lower()).capitalize()
+        return redirect('edit',title)
