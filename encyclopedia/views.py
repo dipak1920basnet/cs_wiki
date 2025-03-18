@@ -86,8 +86,23 @@ def create_content(request):
         "form":AddContent()
     })
 
+def edit_page(request,name):
+    content = util.get_entry(name)
+    return render(request, f"encyclopedia/edit.html",
+                  {
+                      "title":name,
+                      "content":content
+                  })
+
 def go_edit(request):
     if request.method == "POST":
         title = request.POST.get("title")
         title=(title.lower()).capitalize()
         return redirect('edit',title)
+    
+def save_edit(request):
+    if request.method == "POST":
+        title = (request.POST.get("title")).lower().capitalize()
+        content = request.POST.get("content")
+        util.save_entry(title, content)
+    return redirect('call',name=title)
