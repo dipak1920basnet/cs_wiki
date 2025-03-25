@@ -27,7 +27,7 @@ def call(request, name):
 def random_entry(request):
     content_list = util.list_entries()
     m = random.choice(content_list)
-    return redirect('call',name=m)
+    return redirect('encyclopedia:call',name=m)
 
 def search(request):
     if request.method == "POST":
@@ -36,11 +36,13 @@ def search(request):
         task = request.POST.get("q","") # Get the searched query
         for i in available_entry:
             if (task.lower()).capitalize() == (i.lower()).capitalize():
-                return redirect('call',i)  #Go to the pages if the query matches
-            if task in i:
+                return redirect('encyclopedia:call',(i.lower()).capitalize())  #Go to the pages if the query matches
+            if task.lower() in i.lower().capitalize():
                 record_to_show.append(i) # Append if it is available
+            elif task.lower().capitalize() in i.lower().capitalize():
+                record_to_show.append(i)
     if len(record_to_show) == 0:
-            return redirect('call',task)
+            return redirect('encyclopedia:call',task)
     return render(request, "encyclopedia/index.html", {
         "entries": record_to_show
     }) 
@@ -76,12 +78,14 @@ def create_content(request):
         if form.is_valid():
             new_title = form.cleaned_data["new_title"]  ## Get the title
             new_content = form.cleaned_data["new_content"]  ## Get the content
+            content = f"""#{new_title}
+{new_content}"""
             if new_title in util.list_entries():
                 return HttpResponse("The file is already there.")
             else:
-                util.save_entry(new_title, new_content)
+                util.save_entry((str(new_title).lower().capitalize()),content)
 
-
+            print(new_title)
     return render(request, "encyclopedia/add.html",{
         "form":AddContent()
     })
@@ -98,11 +102,11 @@ def go_edit(request):
     if request.method == "POST":
         title = request.POST.get("title")
         title=(title.lower()).capitalize()
-        return redirect('edit',title)
+        return redirect('encyclopedia:edit',title)
     
 def save_edit(request):
     if request.method == "POST":
         title = (request.POST.get("title")).lower().capitalize()
         content = request.POST.get("content")
         util.save_entry(title, content)
-    return redirect('call',name=title)
+    return redirect('encyclopedia:call',name=title)
