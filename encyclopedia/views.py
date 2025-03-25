@@ -19,6 +19,7 @@ def call(request, name):
                       {
                           "message":f" requested page {name} was not found. "
                       })
+    
     return render(request, "encyclopedia/entry.html",{
         "title":name,
         "entrie":markdown2.Markdown().convert(content)
@@ -78,14 +79,10 @@ def create_content(request):
         if form.is_valid():
             new_title = form.cleaned_data["new_title"]  ## Get the title
             new_content = form.cleaned_data["new_content"]  ## Get the content
-            content = f"""#{new_title}
-{new_content}"""
             if new_title in util.list_entries():
                 return HttpResponse("The file is already there.")
             else:
-                util.save_entry((str(new_title).lower().capitalize()),content)
-
-            print(new_title)
+                util.save_entry(new_title,new_content)
     return render(request, "encyclopedia/add.html",{
         "form":AddContent()
     })
