@@ -86,6 +86,8 @@ def create_content(request):
                       })
             else:
                 util.save_entry(new_title,new_content)
+                return redirect('encyclopedia:call',new_title)
+
     return render(request, "encyclopedia/add.html",{
         "form":AddContent()
     })
