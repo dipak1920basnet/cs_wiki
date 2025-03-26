@@ -80,7 +80,10 @@ def create_content(request):
             new_title = form.cleaned_data["new_title"]  ## Get the title
             new_content = form.cleaned_data["new_content"]  ## Get the content
             if new_title in util.list_entries():
-                return HttpResponse("The file is already there.")
+                return render(request, "encyclopedia/error.html",
+                      {
+                          "message":f" requested page {new_title} is alrady available. "
+                      })
             else:
                 util.save_entry(new_title,new_content)
     return render(request, "encyclopedia/add.html",{
