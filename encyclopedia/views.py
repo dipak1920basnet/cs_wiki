@@ -70,7 +70,6 @@ class AddContent(forms.Form):
         }),
         label="Add Content:")
     
-
 def create_content(request):
     if request.method == "POST":
         # Take in the data the user submitted:
@@ -82,7 +81,7 @@ def create_content(request):
             if new_title in util.list_entries():
                 return render(request, "encyclopedia/error.html",
                       {
-                          "message":f" requested page {new_title} is alrady available. "
+                          "message":f" Requested page {new_title} is already available. "
                       })
             else:
                 util.save_entry(new_title,new_content)
